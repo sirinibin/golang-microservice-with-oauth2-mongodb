@@ -1,17 +1,15 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"rest-api/db"
 	"rest-api/routes/user"
 
 	"github.com/gorilla/mux"
-	"gopkg.in/mgo.v2/bson"
 )
 
-var employees []Employee
+//var employees []Employee
 
 func main() {
 
@@ -20,15 +18,18 @@ func main() {
 
 	router.HandleFunc("/v1/register", routes.Register).Methods("POST")
 
-	router.HandleFunc("/v1/employees", GetEmployees).Methods("GET")
-	router.HandleFunc("/v1/employees/{id}", GetEmployee).Methods("GET")
-	router.HandleFunc("/v1/employees", CreateEmployee).Methods("POST")
-	router.HandleFunc("/v1/employees/{id}", UpdateEmployee).Methods("PUT")
-	router.HandleFunc("/v1/employees/{id}", DeleteEmployee).Methods("DELETE")
+	/*
+		router.HandleFunc("/v1/employees", GetEmployees).Methods("GET")
+		router.HandleFunc("/v1/employees/{id}", GetEmployee).Methods("GET")
+		router.HandleFunc("/v1/employees", CreateEmployee).Methods("POST")
+		router.HandleFunc("/v1/employees/{id}", UpdateEmployee).Methods("PUT")
+		router.HandleFunc("/v1/employees/{id}", DeleteEmployee).Methods("DELETE")
+	*/
 
 	log.Fatal(http.ListenAndServe(":8008", router))
 }
 
+/*
 func GetEmployees(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
@@ -47,7 +48,7 @@ func GetEmployee(w http.ResponseWriter, r *http.Request) {
 				return
 			 }
 		  }
-	*/
+
 	json.NewEncoder(w).Encode(&Employee{})
 
 }
@@ -68,7 +69,7 @@ func CreateEmployee(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(employee)
-	*/
+
 
 }
 func UpdateEmployee(w http.ResponseWriter, r *http.Request) {
@@ -99,7 +100,7 @@ func UpdateEmployee(w http.ResponseWriter, r *http.Request) {
 			response := map[string]interface{}{"data": employee, "status": 1}
 			json.NewEncoder(w).Encode(response)
 		}
-	*/
+	*
 
 }
 func DeleteEmployee(w http.ResponseWriter, r *http.Request) {
@@ -112,21 +113,13 @@ func DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	            break
 	        }
 
-		} */
+		}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(employees)
 	return
 }
 
-/*
-type User struct {
-	ID  bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
-	Name string `bson:"name" json:"name" valid:"required~Name is required" `
-	Username string `bson:"username" json:"username" valid:"required~Username is required"`
-	Email string `bson:"email" json:"email" valid:"required~E-mail is required"`
-	Password string `bson:"password" json:"password" valid:"required~Password is required"`
-} */
 
 type Employee struct {
 	ID    bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
