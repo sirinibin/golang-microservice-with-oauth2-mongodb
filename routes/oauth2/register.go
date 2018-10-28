@@ -1,5 +1,18 @@
 package register
 
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+	"github.com/gorilla/mux"
+	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+	"github.com/asaskevich/govalidator"
+	"net/url"
+	"github.com/sirinibin/golang-mongodb-restful-api-with-OAuth2/models"
+   )
+
+   
 func (user *User) validate(w http.ResponseWriter,r *http.Request) bool  {
 	errs := url.Values{}
 

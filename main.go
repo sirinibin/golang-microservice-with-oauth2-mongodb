@@ -10,7 +10,8 @@ import (
  "github.com/asaskevich/govalidator"
  //"errors"
  "net/url"
- "routes/oauth2/register"
+ "github.com/sirinibin/golang-mongodb-restful-api-with-OAuth2/routes/oauth2"
+ "github.com/sirinibin/golang-mongodb-restful-api-with-OAuth2/models"
  //"fmt"
 
 )
@@ -163,13 +164,7 @@ type User struct {
 	Email string `bson:"email" json:"email" valid:"required~E-mail is required"`
 	Password string `bson:"password" json:"password" valid:"required~Password is required"`
 } */
-type User struct {
-	ID  bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
-	Name string `bson:"name" json:"name"`
-	Username string `bson:"username" json:"username"`
-	Email string `bson:"email" json:"email"`
-	Password string `bson:"password" json:"password"`
-}
+
 
 type Employee struct {
 	ID  bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
