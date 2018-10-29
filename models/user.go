@@ -5,17 +5,20 @@ import (
 	"net/http"
 	"net/url"
 	"rest-api/db"
+	time "time"
 
 	"github.com/asaskevich/govalidator"
 	"gopkg.in/mgo.v2/bson"
 )
 
 type User struct {
-	ID       bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
-	Name     string        `bson:"name" json:"name"`
-	Username string        `bson:"username" json:"username"`
-	Email    string        `bson:"email" json:"email"`
-	Password string        `bson:"password" json:"password"`
+	ID        bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
+	Name      string        `bson:"name" json:"name"`
+	Username  string        `bson:"username" json:"username"`
+	Email     string        `bson:"email" json:"email"`
+	Password  string        `bson:"password" json:"password,omitempty"`
+	CreatedAt time.Time     `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time     `bson:"updated_at" json:"updated_at"`
 }
 
 func (user *User) Validate(w http.ResponseWriter, r *http.Request) bool {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"rest-api/db"
+	"time"
 
 	"gopkg.in/mgo.v2/bson"
 
@@ -24,6 +25,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	salt, _ := bcrypt.Salt(10)
 	user.Password, _ = bcrypt.Hash(user.Password, salt)
 
+	user.CreatedAt = time.Now().Local()
+	user.UpdatedAt = time.Now().Local()
+
 	insertionErrors := c.Insert(&user)
 
 	if insertionErrors != nil {
@@ -35,7 +39,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		user.Password = ""
 		response := map[string]interface{}{"data": user, "status": 1}
 		json.NewEncoder(w).Encode(response)
 	}

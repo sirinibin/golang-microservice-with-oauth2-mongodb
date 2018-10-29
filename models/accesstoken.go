@@ -12,9 +12,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-//var accessToken AccessToken
-var authocode Authcode
-
 //AccessTokenRequestBody : AccessTokenRequestBody structure
 type AccessTokenRequestBody struct {
 	AuthorizationCode string `bson:"authorization_code" json:"authorization_code"`
@@ -23,19 +20,74 @@ type AccessTokenRequestBody struct {
 //AccessToken : Authcode structure
 type AccessToken struct {
 	ID        bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
-	Token     string        `bson:"code" json:"code"`
+	Token     string        `bson:"token" json:"token"`
 	ExpiresAt time.Time     `bson:"expires_at" json:"expires_at"`
 	UserID    bson.ObjectId `bson:"user_id" json:"user_id"`
 	CreatedAt time.Time     `bson:"created_at" json:"created_at"`
 	UpdatedAt time.Time     `bson:"updated_at" json:"updated_at"`
 }
 
-//GetAccessToken : return GetAccessToken object
-/*
-func (accessTokenRequest *AccessTokenRequestBody) GetAccessToken() AccessToken {
-	return accessToken
+//GetUser : return user object
+func (accessToken *AccessToken) GetUser() User {
+	user.Password = ""
+	return user
 }
-*/
+
+//Remove : remove access token
+func (accessToken *AccessToken) Remove() bool {
+
+	db := database.Db
+	err := db.C("accesstoken").Remove(&accessToken)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+
+}
+
+//AuthorizeByToken : Authorize api calls by token
+func (accessToken *AccessToken) AuthorizeByToken(w http.ResponseWriter, r *http.Request) bool {
+
+	keys, ok := r.URL.Query()["access_token"]
+	token := ""
+	if !ok || len(keys[0]) < 1 {
+		token = r.Header.Get("access_token")
+	} else {
+		token = keys[0]
+	}
+
+	if govalidator.IsNull(token) {
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		response := map[string]interface{}{"errors": map[string]interface{}{"access_token": "Access token is required"}, "status": 0}
+		json.NewEncoder(w).Encode(response)
+		return false
+	}
+
+	db := database.Db
+	now := time.Now().Local()
+	err := db.C("accesstoken").Find(bson.M{"token": token, "expires_at": bson.M{"$gt": now}}).One(&accessToken)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		response := map[string]interface{}{"errors": map[string]interface{}{"access_token": "Invalid Access token"}, "status": 0}
+		json.NewEncoder(w).Encode(response)
+		return false
+	}
+
+	err = db.C("user").Find(bson.M{"_id": accessToken.UserID}).One(&user)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		response := map[string]interface{}{"errors": map[string]interface{}{"access_token": "Invalid User Record for this Access token"}, "status": 0}
+		json.NewEncoder(w).Encode(response)
+		return false
+	}
+
+	return true
+}
 
 //GenerateAccessToken : generate and return accessToken Object
 func (accessTokenRequest *AccessTokenRequestBody) GenerateAccessToken(w http.ResponseWriter) *AccessToken {
@@ -86,9 +138,9 @@ func (accessTokenRequest *AccessTokenRequestBody) Validate(w http.ResponseWriter
 	if !govalidator.IsNull(accessTokenRequest.AuthorizationCode) {
 
 		now := time.Now().Local()
-		err := db.C("authcode").Find(bson.M{"code": accessTokenRequest.AuthorizationCode, "expires_at": bson.M{"$gt": now}}).One(&authocode)
-		if err != nil {
-			errs.Add("authorization_code", "Invalid Auth code")
+		count, _ := db.C("authcode").Find(bson.M{"code": accessTokenRequest.AuthorizationCode, "expires_at": bson.M{"$gt": now}}).Count()
+		if count == 0 {
+			errs.Add("authorization_code", "Invalid Authorization code")
 		}
 	}
 

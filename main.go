@@ -21,6 +21,9 @@ func main() {
 	//OAuth2
 	router.HandleFunc("/v1/authorize", routes.Authorize).Methods("POST")
 	router.HandleFunc("/v1/accesstoken", routes.AccessToken).Methods("POST")
+	//Me
+	router.HandleFunc("/v1/me", routes.Me).Methods("GET")
+	router.HandleFunc("/v1/logout", routes.LogOut).Methods("GET")
 
 	/*
 		router.HandleFunc("/v1/employees", GetEmployees).Methods("GET")
