@@ -13,7 +13,6 @@ import (
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	user := &models.User{}
 	if !user.Validate(w, r) {
 		return
@@ -28,11 +27,13 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	insertionErrors := c.Insert(&user)
 
 	if insertionErrors != nil {
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		response := map[string]interface{}{"errors": insertionErrors.Error(), "status": 0}
 		json.NewEncoder(w).Encode(response)
 
 	} else {
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		user.Password = ""
 		response := map[string]interface{}{"data": user, "status": 1}

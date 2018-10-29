@@ -25,6 +25,7 @@ func (user *User) Validate(w http.ResponseWriter, r *http.Request) bool {
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		errs.Add("data", "Invalid data")
 
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		response := map[string]interface{}{"errors": errs, "status": 0}
 		json.NewEncoder(w).Encode(response)
@@ -54,6 +55,7 @@ func (user *User) Validate(w http.ResponseWriter, r *http.Request) bool {
 	}
 
 	if len(errs) > 0 {
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		response := map[string]interface{}{"errors": errs, "status": 0}
 		json.NewEncoder(w).Encode(response)

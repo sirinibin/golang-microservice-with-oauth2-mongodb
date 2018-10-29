@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"rest-api/db"
-	"rest-api/routes/user"
+	"rest-api/routes"
 
 	"github.com/gorilla/mux"
 )
@@ -17,6 +17,9 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/v1/register", routes.Register).Methods("POST")
+
+	//OAuth2
+	router.HandleFunc("/v1/authorize", routes.Authorize).Methods("POST")
 
 	/*
 		router.HandleFunc("/v1/employees", GetEmployees).Methods("GET")
