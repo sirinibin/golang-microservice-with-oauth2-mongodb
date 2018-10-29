@@ -10,11 +10,11 @@ import (
 // Authorize : handler function for /v1/authorize api call
 func Authorize(w http.ResponseWriter, r *http.Request) {
 
-	auth := &models.Authorize{}
-	if !auth.Validate(w, r) {
+	authRequest := &models.AuthorizeRequestBody{}
+	if !authRequest.Validate(w, r) {
 		return
 	}
-	authcode := auth.GenerateAuthCode(w)
+	authcode := authRequest.GenerateAuthCode(w)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

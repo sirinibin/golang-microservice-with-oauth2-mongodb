@@ -10,13 +10,14 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/jameskeane/bcrypt"
+	"github.com/satori/go.uuid"
 	"gopkg.in/mgo.v2/bson"
 )
 
 var user User
 
 //Authorize : Authorize structure
-type Authorize struct {
+type AuthorizeRequestBody struct {
 	Username string `bson:"username" json:"username"`
 	Password string `bson:"password" json:"password"`
 }
@@ -24,7 +25,7 @@ type Authorize struct {
 //Authcode : Authcode structure
 type Authcode struct {
 	ID        bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
-	Code      []byte        `bson:"code" json:"code"`
+	Code      string        `bson:"code" json:"code"`
 	ExpiresAt time.Time     `bson:"expires_at" json:"expires_at"`
 	UserID    bson.ObjectId `bson:"user_id" json:"user_id"`
 	CreatedAt time.Time     `bson:"created_at" json:"created_at"`
@@ -32,21 +33,21 @@ type Authcode struct {
 }
 
 //GetUser : return user object
-func (auth *Authorize) GetUser() User {
+func (auth *AuthorizeRequestBody) GetUser() User {
 	return user
 }
 
 //GenerateAuthCode : generate and return authcode
-func (auth *Authorize) GenerateAuthCode(w http.ResponseWriter) *Authcode {
+func (auth *AuthorizeRequestBody) GenerateAuthCode(w http.ResponseWriter) *Authcode {
 	b := make([]byte, 50)
 	rand.Read(b)
 
 	authcode := &Authcode{}
 	authcode.ID = bson.NewObjectId()
-	authcode.Code = b
+	authcode.Code = uuid.Must(uuid.NewV4()).String()
 	authcode.UserID = user.ID
 	authcode.ExpiresAt = time.Now().Local().Add(time.Hour*time.Duration(0) +
-		time.Minute*time.Duration(5) +
+		time.Minute*time.Duration(1) +
 		time.Second*time.Duration(0))
 	authcode.CreatedAt = time.Now().Local()
 	authcode.UpdatedAt = time.Now().Local()
@@ -68,7 +69,7 @@ func (auth *Authorize) GenerateAuthCode(w http.ResponseWriter) *Authcode {
 }
 
 //Validate : Validate authorization data
-func (auth *Authorize) Validate(w http.ResponseWriter, r *http.Request) bool {
+func (auth *AuthorizeRequestBody) Validate(w http.ResponseWriter, r *http.Request) bool {
 	errs := url.Values{}
 	db := database.Db
 

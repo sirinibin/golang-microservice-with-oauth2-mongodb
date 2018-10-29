@@ -20,6 +20,7 @@ func main() {
 
 	//OAuth2
 	router.HandleFunc("/v1/authorize", routes.Authorize).Methods("POST")
+	router.HandleFunc("/v1/accesstoken", routes.AccessToken).Methods("POST")
 
 	/*
 		router.HandleFunc("/v1/employees", GetEmployees).Methods("GET")
