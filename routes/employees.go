@@ -3,16 +3,11 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
-	"rest-api/db"
-	"time"
-
-	"gopkg.in/mgo.v2/bson"
 
 	"rest-api/models"
-
-	"github.com/jameskeane/bcrypt"
 )
 
+/*
 func Register(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	if !user.Validate(w, r) {
@@ -40,6 +35,40 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		response := map[string]interface{}{"data": user, "status": 1}
+		json.NewEncoder(w).Encode(response)
+	}
+
+}
+
+// Me : handler function for /v1/me call
+func Me(w http.ResponseWriter, r *http.Request) {
+	accessToken := &models.AccessToken{}
+	if !accessToken.AuthorizeByToken(w, r) {
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	user := accessToken.GetUser()
+	response := map[string]interface{}{"data": user, "status": 1}
+	json.NewEncoder(w).Encode(response)
+}
+*/
+
+// CreateEmployee : handler function for POST /v1/employees call
+func CreateEmployee(w http.ResponseWriter, r *http.Request) {
+	accessToken := &models.AccessToken{}
+	if !accessToken.AuthorizeByToken(w, r) {
+		return
+	}
+
+	employee := &models.Employee{}
+
+	if employee.Validate(w, r) && employee.Create(w) {
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		response := map[string]interface{}{"data": employee, "status": 1}
 		json.NewEncoder(w).Encode(response)
 	}
 

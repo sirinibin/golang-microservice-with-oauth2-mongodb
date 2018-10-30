@@ -16,14 +16,19 @@ func main() {
 	database.Connect()
 	router := mux.NewRouter()
 
+	//Register
 	router.HandleFunc("/v1/register", routes.Register).Methods("POST")
 
 	//OAuth2
 	router.HandleFunc("/v1/authorize", routes.Authorize).Methods("POST")
 	router.HandleFunc("/v1/accesstoken", routes.AccessToken).Methods("POST")
-	//Me
+
+	//User
 	router.HandleFunc("/v1/me", routes.Me).Methods("GET")
 	router.HandleFunc("/v1/logout", routes.LogOut).Methods("GET")
+
+	//Employees
+	router.HandleFunc("/v1/employees", routes.CreateEmployee).Methods("POST")
 
 	/*
 		router.HandleFunc("/v1/employees", GetEmployees).Methods("GET")
