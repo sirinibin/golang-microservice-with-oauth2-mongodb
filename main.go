@@ -29,6 +29,7 @@ func main() {
 
 	//Employees
 	router.HandleFunc("/v1/employees", routes.CreateEmployee).Methods("POST")
+	router.HandleFunc("/v1/employees", routes.UpdateEmployee).Methods("PUT")
 
 	/*
 		router.HandleFunc("/v1/employees", GetEmployees).Methods("GET")

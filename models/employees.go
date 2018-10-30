@@ -17,26 +17,34 @@ type Employee struct {
 	ID        bson.ObjectId `bson:"_id,omitempty" json:"id,omitempty"`
 	Name      string        `bson:"name" json:"name"`
 	Email     string        `bson:"email" json:"email"`
-	CreatedAt time.Time     `bson:"created_at" json:"created_at"`
+	CreatedAt time.Time     `bson:"created_at" json:"created_at,omitempty"`
 	UpdatedAt time.Time     `bson:"updated_at" json:"updated_at"`
 }
 
-// Create : Create Employee record
-func (employee *Employee) Create(w http.ResponseWriter) bool {
+var err error
+
+// Save : Create/Update Employee record
+func (employee *Employee) Save(w http.ResponseWriter) bool {
 
 	db := database.Db
 	c := db.C("employees")
 
-	employee.ID = bson.NewObjectId()
-	employee.CreatedAt = time.Now().Local()
 	employee.UpdatedAt = time.Now().Local()
 
-	insertionErrors := c.Insert(&employee)
+	if employee.ID == "" {
+		employee.ID = bson.NewObjectId()
+		employee.CreatedAt = time.Now().Local()
+		err = c.Insert(&employee)
 
-	if insertionErrors != nil {
+	} else {
+
+		err = c.Update(bson.M{"_id": employee.ID}, bson.M{"$set": employee})
+	}
+
+	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
-		response := map[string]interface{}{"errors": insertionErrors.Error(), "status": 0}
+		response := map[string]interface{}{"errors": err.Error(), "status": 0}
 		json.NewEncoder(w).Encode(response)
 		return false
 
@@ -47,7 +55,7 @@ func (employee *Employee) Create(w http.ResponseWriter) bool {
 }
 
 // Validate : Validate Employee creation/Updation
-func (employee *Employee) Validate(w http.ResponseWriter, r *http.Request) bool {
+func (employee *Employee) Validate(w http.ResponseWriter, r *http.Request, action string) bool {
 	errs := url.Values{}
 	db := database.Db
 
@@ -61,6 +69,19 @@ func (employee *Employee) Validate(w http.ResponseWriter, r *http.Request) bool 
 		return false
 	}
 
+	if action == "update" && employee.ID == "" {
+		errs.Add("id", "id is required")
+	}
+	if action == "update" && employee.ID != "" {
+		oldEmployee := Employee{}
+		err = db.C("employees").Find(bson.M{"_id": employee.ID}).One(&oldEmployee)
+		employee.CreatedAt = oldEmployee.CreatedAt
+		if err != nil {
+			errs.Add("id", "Invalid Document ID")
+		}
+
+	}
+
 	if govalidator.IsNull(employee.Name) {
 		errs.Add("name", "Name is required")
 	}
@@ -71,8 +92,8 @@ func (employee *Employee) Validate(w http.ResponseWriter, r *http.Request) bool 
 	fmt.Printf("%+v\n", employee)
 
 	count := 0
-	if employee.ID == "" {
-		//New Records
+	if action == "create" {
+		//New Record
 		count, _ = db.C("employees").Find(bson.M{"email": employee.Email}).Count()
 	} else {
 		//Existing Record
