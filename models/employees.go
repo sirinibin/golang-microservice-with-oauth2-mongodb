@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"rest-api/db"
@@ -22,6 +21,37 @@ type Employee struct {
 }
 
 var err error
+
+// FindByID : Find Employee record
+func (employee *Employee) FindByID(w http.ResponseWriter, id string) bool {
+
+	errs := url.Values{}
+	db := database.Db
+
+	if bson.IsObjectIdHex(id) {
+		err = db.C("employees").FindId(bson.ObjectIdHex(id)).One(&employee)
+		if err != nil {
+			errs.Add("id", "Invalid Document ID")
+		}
+
+	} else {
+		errs.Add("id", "Invalid Document ID")
+	}
+
+	//fmt.Printf("%+v\n", id)
+	if len(errs) > 0 {
+		//errs.Add("id", "Invalid Document ID")
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		response := map[string]interface{}{"errors": errs, "status": 0}
+		json.NewEncoder(w).Encode(response)
+		return false
+	}
+
+	return true
+
+}
 
 // Save : Create/Update Employee record
 func (employee *Employee) Save(w http.ResponseWriter) bool {
@@ -88,8 +118,6 @@ func (employee *Employee) Validate(w http.ResponseWriter, r *http.Request, actio
 	if govalidator.IsNull(employee.Email) {
 		errs.Add("email", "E-mail is required")
 	}
-
-	fmt.Printf("%+v\n", employee)
 
 	count := 0
 	if action == "create" {
