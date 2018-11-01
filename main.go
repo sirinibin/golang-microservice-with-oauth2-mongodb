@@ -29,8 +29,9 @@ func main() {
 
 	//Employees
 	router.HandleFunc("/v1/employees", routes.CreateEmployee).Methods("POST")
-	router.HandleFunc("/v1/employees", routes.UpdateEmployee).Methods("PUT")
+	router.HandleFunc("/v1/employees", routes.ListEmployees).Methods("GET")
 	router.HandleFunc("/v1/employees/{id}", routes.ViewEmployee).Methods("GET")
+	router.HandleFunc("/v1/employees", routes.UpdateEmployee).Methods("PUT")
 	router.HandleFunc("/v1/employees/{id}", routes.DeleteEmployee).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":8008", router))

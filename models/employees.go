@@ -22,6 +22,9 @@ type Employee struct {
 
 var err error
 
+// EmployeesList : to store employee list
+var employeesList []Employee
+
 //Remove : remove access token
 func (employee *Employee) Remove(w http.ResponseWriter) bool {
 
@@ -35,6 +38,29 @@ func (employee *Employee) Remove(w http.ResponseWriter) bool {
 		json.NewEncoder(w).Encode(response)
 		return false
 	}
+	return true
+
+}
+
+// GetEmployeeList : return employees list
+func (employee *Employee) GetEmployeeList() []Employee {
+	return employeesList
+}
+
+// FindAll : Find Employee records
+func (employee *Employee) FindAll(w http.ResponseWriter, offset int, limit int, order string) bool {
+
+	db := database.Db
+	err = db.C("employees").Find(bson.M{}).Skip(offset).Limit(limit).Sort(order).All(&employeesList)
+
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		response := map[string]interface{}{"errors": err, "status": 0}
+		json.NewEncoder(w).Encode(response)
+		return false
+	}
+
 	return true
 
 }
