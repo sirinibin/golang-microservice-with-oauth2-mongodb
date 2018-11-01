@@ -22,6 +22,23 @@ type Employee struct {
 
 var err error
 
+//Remove : remove access token
+func (employee *Employee) Remove(w http.ResponseWriter) bool {
+
+	db := database.Db
+	err := db.C("employees").Remove(&employee)
+
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		response := map[string]interface{}{"errors": err.Error(), "status": 0}
+		json.NewEncoder(w).Encode(response)
+		return false
+	}
+	return true
+
+}
+
 // FindByID : Find Employee record
 func (employee *Employee) FindByID(w http.ResponseWriter, id string) bool {
 

@@ -73,14 +73,14 @@ func DeleteEmployee(w http.ResponseWriter, r *http.Request) {
 	if !accessToken.AuthorizeByToken(w, r) {
 		return
 	}
-
+	params := mux.Vars(r)
 	employee := &models.Employee{}
 
-	if employee.Validate(w, r, "create") && employee.Save(w) {
+	if employee.FindByID(w, params["id"]) && employee.Remove(w) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		response := map[string]interface{}{"data": employee, "status": 1}
+		response := map[string]interface{}{"data": employee, "message": "Deleted Successfully", "status": 1}
 		json.NewEncoder(w).Encode(response)
 	}
 
