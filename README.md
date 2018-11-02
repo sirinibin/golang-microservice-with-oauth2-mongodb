@@ -25,7 +25,7 @@ SERVER: http://api.go.mongodb.nintriva.net
 Step1: cd [GOPATH]/src
 
 Step2:
-git clone -b master https://github.com/sirinibin/golang-mongodb-restful-api-with-oauth2.git rest-api
+git clone -b master https://github.com/sirinibin/golang-mongodb-microservice-with-oauth2.git rest-api
 
 
 Step3: cd rest-api
