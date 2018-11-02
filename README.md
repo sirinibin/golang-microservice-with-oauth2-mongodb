@@ -20,7 +20,7 @@ SERVER: http://api.go.mongodb.nintriva.net
 ```
 
 
-### Download and Install
+### Download and Install 
 
 Step1: cd [GOPATH]/src
 
@@ -37,3 +37,24 @@ Step4: update db/db.go with mongoDb server details
 Step5: Run the app
 
 ./rest-api
+
+### Set Up Developer Dashboard
+Step1: cd developers
+
+
+       vim proxy.conf.json
+        {
+          "/v1/*": {
+            "target": "<API_END_POINT>",
+            "secure": false,
+            "changeOrigin": true
+          }
+        }
+
+
+Step2. Install App:
+       npm install
+
+
+Step3: Start Developer dashboard
+       ng serve --port 8007  --proxy-config proxy.conf.json

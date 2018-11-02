@@ -39,8 +39,8 @@ func AccessToken(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	response := map[string]interface{}{"data": map[string]interface{}{
-		"token":      accesstoken.Token,
-		"expires_at": accesstoken.ExpiresAt,
+		"access_token": accesstoken.Token,
+		"expires_at":   accesstoken.ExpiresAt,
 	}, "status": 1}
 
 	json.NewEncoder(w).Encode(response)
