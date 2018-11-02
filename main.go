@@ -34,5 +34,8 @@ func main() {
 	router.HandleFunc("/v1/employees", routes.UpdateEmployee).Methods("PUT")
 	router.HandleFunc("/v1/employees/{id}", routes.DeleteEmployee).Methods("DELETE")
 
+	//API Info
+	router.HandleFunc("/", routes.APIInfo).Methods("GET")
+
 	log.Fatal(http.ListenAndServe(":8008", router))
 }

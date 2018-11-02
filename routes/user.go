@@ -73,3 +73,12 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 	response := map[string]interface{}{"data": map[string]interface{}{"user_id": user.ID, "message": "LoggedOut Successfully"}, "status": 1}
 	json.NewEncoder(w).Encode(response)
 }
+
+// APIInfo : handler function for / call
+func APIInfo(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	response := map[string]interface{}{"hello": "Welcome to GoLang /MongoDb RESTful API", "status": 1}
+	json.NewEncoder(w).Encode(response)
+}
