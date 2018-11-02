@@ -7,7 +7,7 @@ Hopefully this will save lot of your time as this API includes all the basic stu
 
 This API also includes a developer dashboard with the API documentation which is developed in Angularjs 6. This will be useful to manage your developer access to the API documentation.
 
-[DEMO](http://api.go.mongodb.nintriva.net)
+[DEMO](http://developers.go.mongodb.nintriva.net)
 -------------------
 ```
 http://developers.go.mongodb.nintriva.net
