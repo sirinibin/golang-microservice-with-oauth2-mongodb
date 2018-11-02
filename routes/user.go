@@ -79,6 +79,6 @@ func APIInfo(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	response := map[string]interface{}{"hello": "Welcome to GoLang /MongoDb RESTful API", "status": 1}
+	response := map[string]interface{}{"hello": "Welcome to GoLang /MongoDb Microservice", "status": 1}
 	json.NewEncoder(w).Encode(response)
 }

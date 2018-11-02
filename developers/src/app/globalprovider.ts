@@ -6,7 +6,7 @@ import { CookieService } from 'ngx-cookie-service';
 export class GlobalProvider {
     isGuest=true;
     username='';
-    title="GoLang / GO RESTful API + MongoDb with OAuth2";
+    title="GoLang / GO Microservice + MongoDb with OAuth2";
     api_endpoint="http://api.go.mongodb.nintriva.net";
 
 

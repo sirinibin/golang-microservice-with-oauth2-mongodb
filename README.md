@@ -1,8 +1,8 @@
-# GoLang / Go + MongoDb  RESTful API with OAuth2
+# GoLang / Go + MongoDb  Micro service with OAuth2
 
-![GoLang / Go + MongoDb  RESTful API with OAuth2](https://cdn.pbrd.co/images/HLimzk1.png)
+![GoLang / Go + MongoDb  Microservice with OAuth2](https://cdn.pbrd.co/images/HLimzk1.png)
 
-This is a Ready to deploy GoLang / Go RESTful API with OAuth2 authentication/security.You can use this if you want to quick start developing your own custom RESTful API by skipping 95% of your scratch works.
+This is a Ready to deploy GoLang / Go Micro service with OAuth2 authentication/security.You can use this if you want to quick start developing your own custom Micro service by skipping 95% of your scratch works.
 Hopefully this will save lot of your time as this API includes all the basic stuffs you need to get started.
 
 This API also includes a developer dashboard with the API documentation which is developed in Angularjs 6. This will be useful to manage your developer access to the API documentation.
