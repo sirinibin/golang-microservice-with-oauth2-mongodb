@@ -3,7 +3,6 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"rest-api/models"
 
@@ -54,34 +53,10 @@ func ListEmployees(w http.ResponseWriter, r *http.Request) {
 	if !accessToken.AuthorizeByToken(w, r) {
 		return
 	}
-	//params := mux.Vars(r)
 
 	employee := &models.Employee{}
 
-	limit := 10
-	page := 1
-	order := "name"
-	//order := bson.D{{Name: "name", Value: -1}}
-
-	keys, ok := r.URL.Query()["limit"]
-	if ok && len(keys[0]) >= 1 {
-		limit, _ = strconv.Atoi(keys[0])
-	}
-	keys, ok = r.URL.Query()["page"]
-	if ok && len(keys[0]) >= 1 {
-		page, _ = strconv.Atoi(keys[0])
-	}
-	keys, ok = r.URL.Query()["order"]
-	if ok && len(keys[0]) >= 1 {
-		order = keys[0]
-	}
-
-	//fmt.Printf("%v", keys)
-	//fmt.Printf("%+v\n", keys[0])
-
-	offset := (page - 1) * limit
-
-	if employee.FindAll(w, offset, limit, order) {
+	if employee.Search(w, r) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"rest-api/db"
+	"strconv"
 	time "time"
 
 	"github.com/asaskevich/govalidator"
@@ -47,11 +48,46 @@ func (employee *Employee) GetEmployeeList() []Employee {
 	return employeesList
 }
 
+// Search : return employees list
+func (employee *Employee) Search(w http.ResponseWriter, r *http.Request) bool {
+
+	limit := 10
+	page := 1
+	order := "name"
+	search := bson.M{}
+
+	keys, ok := r.URL.Query()["limit"]
+	if ok && len(keys[0]) >= 1 {
+		limit, _ = strconv.Atoi(keys[0])
+	}
+	keys, ok = r.URL.Query()["page"]
+	if ok && len(keys[0]) >= 1 {
+		page, _ = strconv.Atoi(keys[0])
+	}
+	keys, ok = r.URL.Query()["order"]
+	if ok && len(keys[0]) >= 1 {
+		order = keys[0]
+	}
+	keys, ok = r.URL.Query()["search[name]"]
+	if ok && len(keys[0]) >= 1 {
+		search["name"] = map[string]interface{}{"$regex": keys[0], "$options": "i"}
+	}
+	keys, ok = r.URL.Query()["search[email]"]
+	if ok && len(keys[0]) >= 1 {
+		search["email"] = map[string]interface{}{"$regex": keys[0], "$options": "i"}
+	}
+
+	offset := (page - 1) * limit
+
+	return employee.FindAll(w, offset, limit, order, search)
+
+}
+
 // FindAll : Find Employee records
-func (employee *Employee) FindAll(w http.ResponseWriter, offset int, limit int, order string) bool {
+func (employee *Employee) FindAll(w http.ResponseWriter, offset int, limit int, order string, search bson.M) bool {
 
 	db := database.Db
-	err = db.C("employees").Find(bson.M{}).Skip(offset).Limit(limit).Sort(order).All(&employeesList)
+	err = db.C("employees").Find(search).Skip(offset).Limit(limit).Sort(order).All(&employeesList)
 
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
